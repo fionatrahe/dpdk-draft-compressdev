@@ -39,18 +39,18 @@ enum rte_comp_op_status {
 
 /** Compression Algorithms */
 enum rte_comp_algorithm {
-	RTE_COMP_UNSPECIFIED = 0,
+	RTE_COMP_ALGO_UNSPECIFIED = 0,
 	/** No Compression algorithm */
-	RTE_COMP_NULL,
+	RTE_COMP_ALGO_NULL,
 	/**< No compression.
 	 * Pass-through, data is copied unchanged from source buffer to
 	 * destination buffer.
 	 */
-	RTE_COMP_DEFLATE,
+	RTE_COMP_ALGO_DEFLATE,
 	/**< DEFLATE compression algorithm
 	 * https://tools.ietf.org/html/rfc1951
 	 */
-	RTE_COMP_LZS,
+	RTE_COMP_ALGO_LZS,
 	/**< LZS compression algorithm
 	 * https://tools.ietf.org/html/rfc2395
 	 */
@@ -113,7 +113,7 @@ enum rte_comp_flush_flag {
 	 * ops will be independent of ops processed before this.
 	 */
 	RTE_COMP_FLUSH_FINAL
-	/**< Same as RTE_COMP_FLUSH_FULL but if op.algo is RTE_COMP_DEFLATE
+	/**< Same as RTE_COMP_FLUSH_FULL but if op.algo is RTE_COMP_ALGO_DEFLATE
 	 * then bfinal bit is set in the last block.
 	 */
 };
