@@ -73,13 +73,13 @@ enum rte_comp_algorithm {
 
 /** Compression checksum types */
 enum rte_comp_checksum_type {
-	RTE_COMP_NONE,
+	RTE_COMP_CHECKSUM_NONE,
 	/**< No checksum generated */
-	RTE_COMP_CRC32,
+	RTE_COMP_CHECKSUM_CRC32,
 	/**< Generates a CRC32 checksum, as used by gzip */
-	RTE_COMP_ADLER32,
+	RTE_COMP_CHECKSUM_ADLER32,
 	/**< Generates an Adler-32 checksum, as used by zlib */
-	RTE_COMP_CRC32_ADLER32,
+	RTE_COMP_CHECKSUM_CRC32_ADLER32,
 	/**< Generates both Adler-32 and CRC32 checksums, concatenated.
 	 * CRC32 is in the lower 32bits, Adler-32 in the upper 32 bits.
 	 */
@@ -88,11 +88,11 @@ enum rte_comp_checksum_type {
 
 /** Compression Huffman Type - used by DEFLATE algorithm */
 enum rte_comp_huffman {
-	RTE_COMP_DEFAULT,
+	RTE_COMP_HUFFMAN_DEFAULT,
 	/**< PMD may choose which Huffman codes to use */
-	RTE_COMP_FIXED,
+	RTE_COMP_HUFFMAN_FIXED,
 	/**< Use Fixed Huffman codes */
-	RTE_COMP_DYNAMIC,
+	RTE_COMP_HUFFMAN_DYNAMIC,
 	/**< Use Dynamic Huffman codes */
 };
 
@@ -166,10 +166,10 @@ struct rte_comp_compress_xform {
 	}; /**< Algorithm specific parameters */
 	int level;
 	/**< Compression level */
-	uint32_t window_size;
-	/**< Depth of sliding window to be used. If window size can't be
-	 * supported by the PMD then it may fall back to a smaller size. This
-	 * is likely to result in a worse compression ratio.
+	uint8_t window_size;
+	/**< Base two log value of sliding window to be used. If window size
+	 * can't be supported by the PMD then it may fall back to a smaller
+	 * size. This is likely to result in a worse compression ratio.
 	 */
 	enum rte_comp_checksum_type chksum;
 	/**< Type of checksum to generate on the uncompressed data */
@@ -183,9 +183,9 @@ struct rte_comp_decompress_xform {
 	/**< Algorithm to use for decompression */
 	enum rte_comp_checksum_type chksum;
 	/**< Type of checksum to generate on the decompressed data */
-	uint32_t window_size;
-	/**< Max depth of sliding window which was used to generate compressed
-	 * data. If window size can't be supported by the PMD then
+	uint8_t window_size;
+	/**< Base two log value of sliding window which was used to generate
+	 * compressed data. If window size can't be supported by the PMD then
 	 * setup of stream or private_xform should fail.
 	 */
 };
@@ -316,7 +316,7 @@ struct rte_comp_op {
 	 * will be set to RTE_COMP_OP_STATUS_SUCCESS after operation
 	 * is successfully processed by a PMD
 	 */
-};
+} __rte_cache_aligned;
 
 
 /**

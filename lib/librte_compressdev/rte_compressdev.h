@@ -76,7 +76,7 @@ struct rte_param_log2_range {
 	uint8_t increment;
 	/**< If a range of sizes are supported,
 	 * this parameter is used to indicate
-	 * increments in log base 2 byte value
+	 * increments in base 2 log byte value
 	 * that are supported between the minimum and maximum
 	 */
 };
@@ -88,13 +88,17 @@ struct rte_compressdev_capabilities {
 	uint64_t comp_feature_flags;
 	/**< Bitmask of flags for compression service features */
 	struct rte_param_log2_range window_size;
-	/**< Window size range in bytes */
+	/**< Window size range in base two log byte values */
 };
 
 
 /** Macro used at end of comp PMD list */
 #define RTE_COMP_END_OF_CAPABILITIES_LIST() \
 	{ RTE_COMP_ALGO_UNSPECIFIED }
+
+const struct rte_compressdev_capabilities * __rte_experimental
+rte_compressdev_capability_get(uint8_t dev_id,
+			enum rte_comp_algorithm algo);
 
 /**
  * compression device supported feature flags
@@ -298,13 +302,12 @@ rte_compressdev_configure(uint8_t dev_id,
 			struct rte_compressdev_config *config);
 
 /**
- * Start an device.
+ * Start a device.
  *
- * The device start step is the last one and consists of setting the configured
- * offload features and in starting the transmit and the receive units of the
- * device.
- * On success, all basic functions exported by the API (link status,
- * receive/transmit, and so on) can be invoked.
+ * The device start step is called after configuring the device and setting up
+ * its queue_pairs.
+ * On success, data-path functions exported by the API (enqueue/dequeue, etc)
+ * can be invoked.
  *
  * @param dev_id
  *   Compress device identifier
@@ -316,7 +319,7 @@ int __rte_experimental
 rte_compressdev_start(uint8_t dev_id);
 
 /**
- * Stop an device. The device can be restarted with a call to
+ * Stop a device. The device can be restarted with a call to
  * rte_compressdev_start()
  *
  * @param dev_id
@@ -340,6 +343,7 @@ rte_compressdev_close(uint8_t dev_id);
 
 /**
  * Allocate and set up a receive queue pair for a device.
+ * This should only be called when the device is stopped.
  *
  *
  * @param dev_id
